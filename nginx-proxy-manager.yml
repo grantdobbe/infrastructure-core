@@ -1,9 +1,10 @@
+---
 services:
-  app:
+  nginx-proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     network_mode: host
-    
+
     volumes:
       - /srv/app-configs/nginx-proxy/data:/data
       - /srv/app-configs/nginx-proxy/letsencrypt:/etc/letsencrypt
