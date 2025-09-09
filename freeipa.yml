@@ -1,6 +1,6 @@
 services:
   freeipa:
-    image: freeipa/freeipa-server
+    image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     hostname: auth.hacker-haus.org # IMPORTANT: Change this to your desired hostname
     command:
