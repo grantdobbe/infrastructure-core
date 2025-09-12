@@ -1,0 +1,35 @@
+---
+services:
+  # ntfy service (https://ntfy.sh)
+  ntfy:
+    image: binwiederhier/ntfy:latest
+    container_name: ntfy
+    command:
+      - serve
+    environment:
+      - NTFY_BASE_URL=https://nfty.hacker-haus.org # Change localhost to your server's IP if needed
+      - NTFY_CACHE_FILE=/var/cache/ntfy/cache.db
+      - NTFY_AUTH_FILE=/etc/ntfy/user.db
+      # - NTFY_AUTH_DEFAULT_ACCESS="read-only" # Uncomment for more security in production
+    volumes:
+      # Bind mounts for persistent data
+      - /srv/app-configs/ntfy/cache:/var/cache/ntfy
+      - /srv/app-configs/ntfy/config:/etc/ntfy
+    ports:
+      - "8088:80" # Host port 8088 is mapped to container port 80
+    restart: unless-stopped
+
+  # Apprise API service (https://github.com/caronc/apprise-api)
+  apprise:
+    image: lscr.io/linuxserver/apprise-api:latest
+    container_name: apprise-api
+    environment:
+      - PUID=1000 # Your user ID
+      - PGID=1000 # Your group ID
+      - TZ=Etc/UTC # Your timezone
+    volumes:
+      # Bind mount for persistent data
+      - /srv/app-configs/apprise/config:/config
+    ports:
+      - "8008:8000" # Host port 8008 is mapped to container port 8000
+    restart: unless-stopped
