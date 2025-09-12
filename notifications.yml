@@ -9,6 +9,7 @@ services:
     environment:
       - NTFY_BASE_URL=https://nfty.hacker-haus.org # Change localhost to your server's IP if needed
       - NTFY_CACHE_FILE=/var/cache/ntfy/cache.db
+      - NTFY_ATTACHMENT_CACHE_DIR=/var/lib/ntfy/attachments
       - NTFY_AUTH_FILE=/etc/ntfy/user.db
       # - NTFY_AUTH_DEFAULT_ACCESS="read-only" # Uncomment for more security in production
     volumes:
