@@ -1,4 +1,6 @@
 ---
+name: joplin-server
+
 services:
   app:
     image: joplin/server:latest
@@ -13,6 +15,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       APP_PORT: 22300
+      APP_BASE_URL: https://joplin.hacker-haus.org/
       DB_CLIENT: pg
       POSTGRES_PASSWORD: ${PGPWD}
       POSTGRES_DATABASE: joplin
