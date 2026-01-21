@@ -1,0 +1,22 @@
+--- 
+name: dns
+
+services:
+  dns-server:
+    container_name: dns-server
+    hostname: dns-server
+    image: technitium/dns-server:latest
+    ports:
+      - "5380:5380/tcp" #DNS web console (HTTP)
+      - "53:53/udp" #DNS service
+      - "53:53/tcp" #DNS service
+      - "8443:443/tcp" #HTTPS
+    environment:
+      - DNS_SERVER_DOMAIN=hacker-haus.org 
+      - DNS_SERVER_PREFER_IPV6=true #DNS Server will use IPv6 for querying whenever possible with this option enabled.
+      - DNS_SERVER_WEB_SERVICE_HTTP_PORT=5380 #The TCP port number for the DNS web console over HTTP protocol.
+    volumes:
+      - /srv/app-configs/dns-server:/etc/dns
+    restart: unless-stopped
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65000

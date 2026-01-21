@@ -1,0 +1,35 @@
+---
+services:
+  app:
+    image: joplin/server:latest
+    container_name: joplin_server
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - 22300:22300
+      - 123:123
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      APP_PORT: 22300
+      DB_CLIENT: pg
+      POSTGRES_PASSWORD: ${PGPWD}
+      POSTGRES_DATABASE: joplin
+      POSTGRES_USER: joplin
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: db
+      MAX_TIME_DRIFT: 0
+
+  db:
+    image: postgres:14
+    container_name: joplin_postgres
+    restart: unless-stopped
+    volumes:
+      - /srv/app-configs/joplin-server:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: joplin
+      POSTGRES_USER: joplin
+      POSTGRES_PASSWORD: ${PGPWD}

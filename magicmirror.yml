@@ -1,0 +1,11 @@
+services:
+  magicmirror:
+    container_name: mm
+    image: karsten13/magicmirror:latest
+    restart: always
+    volumes:
+      - /srv/app-configs/magicmirror/config:/opt/magic_mirror/config
+      - /srv/app-configs/magicmirror/modules:/opt/magic_mirror/modules
+      - /srv/app-configs/magicmirror/css/custom.css:/opt/magic_mirror/css/custom.css
+    ports:
+      - 9980:8080
