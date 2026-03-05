@@ -1,0 +1,6 @@
+sabnzbd.hacker-haus.org {
+    reverse_proxy http://10.10.10.50:10097
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: nonfiction.hacker-haus.org

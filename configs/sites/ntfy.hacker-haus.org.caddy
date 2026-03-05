@@ -1,0 +1,6 @@
+ntfy.hacker-haus.org {
+    reverse_proxy http://10.10.10.10:8088
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: apprise.hacker-haus.org

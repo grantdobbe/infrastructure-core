@@ -1,0 +1,8 @@
+labeler.hacker-haus.org, labels.hacker-haus.org {
+    reverse_proxy http://10.10.10.50:8013
+    # Note: hsts_enabled was 0 in NPM, but Caddy defaults to HTTPS.
+    # If HSTS is desired, uncomment the line below:
+    # header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: ha.hacker-haus.org, homeassistant.hacker-haus.org

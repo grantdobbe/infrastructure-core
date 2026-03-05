@@ -1,0 +1,6 @@
+dns.hacker-haus.org {
+    reverse_proxy http://[2603:3023:707:1400::10]:5380
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: joplin.hacker-haus.org

@@ -1,0 +1,6 @@
+{
+    email grant@dobbe.us
+    acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+}
+
+import /etc/caddy/sites/*.caddy

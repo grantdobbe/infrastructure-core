@@ -1,3 +1,5 @@
+---
+name: magicmirror
 services:
   magicmirror:
     container_name: mm

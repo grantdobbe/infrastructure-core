@@ -1,0 +1,8 @@
+prometheus.hacker-haus.org {
+    reverse_proxy http://10.10.10.15:9090
+    # Note: hsts_enabled was 0 in NPM, but Caddy defaults to HTTPS.
+    # If HSTS is desired, uncomment the line below:
+    # header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: prontyboi.hacker-haus.org

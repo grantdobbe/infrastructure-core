@@ -1,0 +1,6 @@
+audiobooks.hacker-haus.org {
+    reverse_proxy http://10.10.10.50:13378
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: musicbox.hacker-haus.org, workshop-music.hacker-haus.org

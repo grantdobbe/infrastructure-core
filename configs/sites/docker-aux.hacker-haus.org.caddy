@@ -1,0 +1,6 @@
+docker-aux.hacker-haus.org {
+    reverse_proxy https://10.10.10.50:8000 # NPM was set to forward_scheme: https
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}
+
+# Proxy Host: docker-core.hacker-haus.org
