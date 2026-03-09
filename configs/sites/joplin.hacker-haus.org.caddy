@@ -1,4 +1,5 @@
-joplin.hacker-haus.org {
+@joplin host joplin.hacker-haus.org
+handle @joplin {
     reverse_proxy http://10.10.10.10:22300
     # Note: hsts_enabled was 0 in NPM, but Caddy defaults to HTTPS.
     # If HSTS is desired, uncomment the line below:

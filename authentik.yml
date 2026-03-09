@@ -6,6 +6,8 @@ services:
     image: postgres:16-alpine
     container_name: authentik_postgresql
     restart: unless-stopped
+    env_file:
+      - authentik.env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ${AUTHENTIK_POSTGRESQL__DB:-authentik} -U ${AUTHENTIK_POSTGRESQL__USER:-authentik}"]
       start_period: 20s
@@ -37,6 +39,8 @@ services:
     container_name: authentik_server
     restart: unless-stopped
     command: server
+    env_file:
+      - authentik.env
     environment:
       AUTHENTIK_REDIS__HOST: authentik_redis
       AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
@@ -67,6 +71,8 @@ services:
     container_name: authentik_worker
     restart: unless-stopped
     command: worker
+    env_file:
+      - authentik.env
     environment:
       AUTHENTIK_REDIS__HOST: authentik_redis
       AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql

@@ -1,0 +1,5 @@
+@office host office.hacker-haus.org
+handle @office {
+    reverse_proxy http://10.10.10.50:13000
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}

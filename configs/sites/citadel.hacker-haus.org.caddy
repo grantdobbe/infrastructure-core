@@ -1,0 +1,6 @@
+@citadel host citadel.hacker-haus.org
+handle @citadel {
+    reverse_proxy http://10.10.10.50:13003
+    header Cross-Origin-Resource-Policy "cross-origin"
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+}

@@ -1,4 +1,5 @@
-fiction.hacker-haus.org {
+@fiction host fiction.hacker-haus.org
+handle @fiction {
     forward_auth http://10.10.10.10:9000 {
         uri /outpost.goauthentik.io/auth/caddy
         copy_headers X-authentik-username X-authentik-groups X-authentik-email X-authentik-name X-authentik-uid
