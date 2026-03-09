@@ -1,4 +1,9 @@
 readarr.hacker-haus.org {
+    forward_auth http://10.10.10.10:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-authentik-username X-authentik-groups X-authentik-email X-authentik-name X-authentik-uid
+        trusted_proxies private_ranges
+    }
     reverse_proxy http://10.10.10.50:8787
     header Strict-Transport-Security "max-age=31536000; includeSubDomains"
 }

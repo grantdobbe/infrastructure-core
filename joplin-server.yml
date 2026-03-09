@@ -10,7 +10,6 @@ services:
       - db
     ports:
       - 22300:22300
-      - 123:123
     volumes:
       - /etc/localtime:/etc/localtime:ro
     environment:
@@ -23,6 +22,13 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_HOST: db
       MAX_TIME_DRIFT: 0
+      # Authentik OIDC — fill in CLIENT_ID and CLIENT_SECRET after creating the
+      # OAuth2/OIDC provider in Authentik (Application slug: joplin)
+      MAILER_ENABLED: 0
+      SSO_ENABLED: 1
+      SSO_CLIENT_ID: ${JOPLIN_SSO_CLIENT_ID}
+      SSO_CLIENT_SECRET: ${JOPLIN_SSO_CLIENT_SECRET}
+      SSO_DISCOVERY_URL: https://auth.hacker-haus.org/application/o/joplin/.well-known/openid-configuration
 
   db:
     image: postgres:14
@@ -30,8 +36,8 @@ services:
     restart: unless-stopped
     volumes:
       - /srv/app-configs/joplin-server:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+    expose:
+      - 5432
     environment:
       POSTGRES_DB: joplin
       POSTGRES_USER: joplin

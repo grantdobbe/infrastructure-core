@@ -13,12 +13,12 @@ services:
       - "17170:17170"
     volumes:
       - "/srv/app-configs/lldap/data:/data"
+    env_file:
+      - lldap.env
     environment:
       - UID=1000
       - GID=1000
       - TZ=Etc/UTC
-      - LLDAP_JWT_SECRET=0a6e12c01038b73696cd284973a53a42f61e252db517009ae3824a823bd7ca83
-      - LLDAP_KEY_SEED=mR5xLJ44uWJi9H60/fQu
       - LLDAP_LDAP_BASE_DN=dc=hacker-haus,dc=org
       - LLDAP_LDAPS_OPTIONS__ENABLED=true
       - LLDAP_LDAPS_OPTIONS__CERT_FILE=/data/cert.pem
