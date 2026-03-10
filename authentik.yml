@@ -103,7 +103,7 @@ services:
     env_file:
       - authentik.env
     environment:
-      AUTHENTIK_HOST: http://authentik_server:9000
+      AUTHENTIK_HOST: https://auth.hacker-haus.org
       AUTHENTIK_INSECURE: "true"
       AUTHENTIK_TOKEN: ${AUTHENTIK_LDAP_TOKEN}
     ports:
