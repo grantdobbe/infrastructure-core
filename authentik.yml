@@ -95,3 +95,19 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  ldap-outpost:
+    image: ghcr.io/goauthentik/ldap:latest
+    container_name: authentik_ldap
+    restart: unless-stopped
+    env_file:
+      - authentik.env
+    environment:
+      AUTHENTIK_HOST: http://authentik_server:9000
+      AUTHENTIK_INSECURE: "true"
+      AUTHENTIK_TOKEN: ${AUTHENTIK_LDAP_TOKEN}
+    ports:
+      - "389:3389"
+      - "636:6636"
+    depends_on:
+      - server
