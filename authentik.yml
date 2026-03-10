@@ -97,7 +97,7 @@ services:
         condition: service_healthy
 
   ldap-outpost:
-    image: ghcr.io/goauthentik/ldap:latest
+    image: ghcr.io/goauthentik/ldap:2025.2.4
     container_name: authentik_ldap
     restart: unless-stopped
     env_file:
