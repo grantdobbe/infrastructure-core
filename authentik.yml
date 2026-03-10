@@ -109,5 +109,3 @@ services:
     ports:
       - "389:3389"
       - "636:6636"
-    depends_on:
-      - server
