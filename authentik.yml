@@ -43,8 +43,6 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-      redis:
-        condition: service_healthy
 
   worker:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_TAG:-2026.2.1}
@@ -65,8 +63,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       postgresql:
-        condition: service_healthy
-      redis:
         condition: service_healthy
 
   ldap-outpost:
