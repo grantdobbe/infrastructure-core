@@ -48,14 +48,8 @@ services:
       AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_POSTGRESQL__DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRESQL__PASSWORD}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
-      AUTHENTIK_EMAIL__HOST: ${AUTHENTIK_EMAIL__HOST:-localhost}
-      AUTHENTIK_EMAIL__PORT: ${AUTHENTIK_EMAIL__PORT:-25}
-      AUTHENTIK_EMAIL__USERNAME: ${AUTHENTIK_EMAIL__USERNAME:-}
-      AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL__PASSWORD:-}
-      AUTHENTIK_EMAIL__USE_TLS: ${AUTHENTIK_EMAIL__USE_TLS:-false}
-      AUTHENTIK_EMAIL__USE_SSL: ${AUTHENTIK_EMAIL__USE_SSL:-false}
-      AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL__FROM:-authentik@hacker-haus.org}
     volumes:
+      - /srv/app-configs/authentik/data:/data
       - /srv/app-configs/authentik/media:/media
       - /srv/app-configs/authentik/custom-templates:/templates
     ports:
@@ -67,7 +61,7 @@ services:
         condition: service_healthy
 
   worker:
-    image: ghcr.io/goauthentik/server:latest
+    image: ghcr.io/goauthentik/server:2025.4
     container_name: authentik_worker
     restart: unless-stopped
     command: worker
@@ -80,14 +74,8 @@ services:
       AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_POSTGRESQL__DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRESQL__PASSWORD}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
-      AUTHENTIK_EMAIL__HOST: ${AUTHENTIK_EMAIL__HOST:-localhost}
-      AUTHENTIK_EMAIL__PORT: ${AUTHENTIK_EMAIL__PORT:-25}
-      AUTHENTIK_EMAIL__USERNAME: ${AUTHENTIK_EMAIL__USERNAME:-}
-      AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL__PASSWORD:-}
-      AUTHENTIK_EMAIL__USE_TLS: ${AUTHENTIK_EMAIL__USE_TLS:-false}
-      AUTHENTIK_EMAIL__USE_SSL: ${AUTHENTIK_EMAIL__USE_SSL:-false}
-      AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL__FROM:-authentik@hacker-haus.org}
     volumes:
+      - /srv/app-configs/authentik/data:/data
       - /srv/app-configs/authentik/media:/media
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -97,7 +85,7 @@ services:
         condition: service_healthy
 
   ldap-outpost:
-    image: ghcr.io/goauthentik/ldap:2025.2.4
+    image: ghcr.io/goauthentik/ldap:2025.4
     container_name: authentik_ldap
     restart: unless-stopped
     env_file:
