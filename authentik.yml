@@ -35,7 +35,7 @@ services:
       - /srv/app-configs/authentik/redis:/data
 
   server:
-    image: ghcr.io/goauthentik/server:latest
+    image: ghcr.io/goauthentik/server:2025.4
     container_name: authentik_server
     restart: unless-stopped
     command: server
@@ -61,7 +61,7 @@ services:
         condition: service_healthy
 
   worker:
-    image: ghcr.io/goauthentik/server:2025.6
+    image: ghcr.io/goauthentik/server:2025.4
     container_name: authentik_worker
     restart: unless-stopped
     command: worker
@@ -85,7 +85,7 @@ services:
         condition: service_healthy
 
   ldap-outpost:
-    image: ghcr.io/goauthentik/ldap:2025.6
+    image: ghcr.io/goauthentik/ldap:2025.4
     container_name: authentik_ldap
     restart: unless-stopped
     env_file:
