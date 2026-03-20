@@ -3,89 +3,19 @@
 
 import ipaddress
 import logging
-import os
-import sys
-from pathlib import Path
 
-import requests
-from dotenv import load_dotenv
+from common import (
+    COMMENT_PREFIX,
+    authentik_session,
+    get_vpn_group_id,
+    get_vpn_users,
+    load_config,
+    mikrotik_session,
+    set_user_attribute,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger(__name__)
-
-COMMENT_PREFIX = "authentik:"
-
-
-def load_config():
-    load_dotenv(Path(__file__).resolve().parent / ".env")
-    required = [
-        "AUTHENTIK_URL",
-        "AUTHENTIK_TOKEN",
-        "MIKROTIK_URL",
-        "MIKROTIK_USER",
-        "MIKROTIK_PASSWORD",
-        "VPN_SUBNET",
-    ]
-    cfg = {}
-    missing = []
-    for key in required:
-        val = os.environ.get(key)
-        if not val:
-            missing.append(key)
-        cfg[key] = val
-    if missing:
-        log.error("Missing required env vars: %s", ", ".join(missing))
-        sys.exit(1)
-    cfg["WG_INTERFACE"] = os.environ.get("WG_INTERFACE", "wireguard1")
-    cfg["VPN_GROUP"] = os.environ.get("VPN_GROUP", "vpn-users")
-    cfg["VPN_SUBNET"] = ipaddress.ip_network(cfg["VPN_SUBNET"], strict=False)
-    return cfg
-
-
-def authentik_session(cfg):
-    s = requests.Session()
-    s.headers["Authorization"] = f"Bearer {cfg['AUTHENTIK_TOKEN']}"
-    s.headers["Accept"] = "application/json"
-    return s
-
-
-def mikrotik_session(cfg):
-    s = requests.Session()
-    s.auth = (cfg["MIKROTIK_USER"], cfg["MIKROTIK_PASSWORD"])
-    s.headers["Accept"] = "application/json"
-    s.verify = False
-    return s
-
-
-def get_vpn_group_id(session, cfg):
-    url = f"{cfg['AUTHENTIK_URL']}/api/v3/core/groups/"
-    resp = session.get(url, params={"name": cfg["VPN_GROUP"]})
-    resp.raise_for_status()
-    results = resp.json()["results"]
-    if not results:
-        log.error("Group '%s' not found in Authentik", cfg["VPN_GROUP"])
-        sys.exit(1)
-    return results[0]["pk"]
-
-
-def get_vpn_users(session, cfg, group_pk):
-    users = []
-    url = f"{cfg['AUTHENTIK_URL']}/api/v3/core/users/"
-    params = {"groups": group_pk, "page_size": 100}
-    while url:
-        resp = session.get(url, params=params)
-        resp.raise_for_status()
-        data = resp.json()
-        users.extend(data["results"])
-        url = data["pagination"].get("next")
-        params = {}  # next URL includes params
-    return users
-
-
-def set_user_attribute(session, cfg, user_pk, attributes):
-    url = f"{cfg['AUTHENTIK_URL']}/api/v3/core/users/{user_pk}/"
-    resp = session.patch(url, json={"attributes": attributes})
-    resp.raise_for_status()
 
 
 def get_mikrotik_peers(session, cfg):
@@ -107,12 +37,9 @@ def add_mikrotik_peer(session, cfg, public_key, allowed_address, comment):
     log.info("Added peer %s (%s)", comment, allowed_address)
 
 
-def update_mikrotik_peer(session, cfg, peer_id, public_key, allowed_address):
+def update_mikrotik_peer(session, cfg, peer_id, **fields):
     url = f"{cfg['MIKROTIK_URL']}/rest/interface/wireguard/peers/{peer_id}"
-    resp = session.patch(url, json={
-        "public-key": public_key,
-        "allowed-address": allowed_address,
-    })
+    resp = session.patch(url, json=fields)
     resp.raise_for_status()
     log.info("Updated peer %s", peer_id)
 
@@ -125,14 +52,14 @@ def delete_mikrotik_peer(session, cfg, peer_id, comment):
 
 
 def allocate_ip(subnet, used_ips):
-    gateway = next(subnet.hosts())  # .1 reserved for gateway
+    gateway = next(subnet.hosts())
     for host in subnet.hosts():
         if host == gateway:
             continue
         if host not in used_ips:
             return host
     log.error("No free IPs in %s", subnet)
-    sys.exit(1)
+    raise RuntimeError(f"No free IPs in {subnet}")
 
 
 def sync(cfg):
@@ -143,14 +70,21 @@ def sync(cfg):
     users = get_vpn_users(ak, cfg, group_pk)
     peers = get_mikrotik_peers(mk, cfg)
 
-    # Index current managed peers by comment
+    # Index managed peers by comment
     managed_peers = {}
     for peer in peers:
         comment = peer.get("comment", "")
         if comment.startswith(COMMENT_PREFIX):
             managed_peers[comment] = peer
 
-    # Collect all used IPs (from MikroTik peers + Authentik attributes)
+    # Index ALL peers by public key for duplicate detection
+    peers_by_key = {}
+    for peer in peers:
+        key = peer.get("public-key", "")
+        if key:
+            peers_by_key[key] = peer
+
+    # Collect all used IPs
     used_ips = set()
     for peer in peers:
         for addr in peer.get("allowed-address", "").split(","):
@@ -193,6 +127,20 @@ def sync(cfg):
             "allowed_address": allowed_ip,
         }
 
+    # Adopt existing peers whose public key matches but comment differs
+    for comment, d in desired.items():
+        if comment in managed_peers:
+            continue
+        existing = peers_by_key.get(d["public_key"])
+        if existing and existing.get("comment", "") != comment:
+            old_comment = existing.get("comment", "(none)")
+            fields = {"comment": comment}
+            if existing.get("allowed-address") != d["allowed_address"]:
+                fields["allowed-address"] = d["allowed_address"]
+            update_mikrotik_peer(mk, cfg, existing[".id"], **fields)
+            log.info("Adopted peer %s -> %s", old_comment, comment)
+            managed_peers[comment] = existing
+
     # Diff and apply
     desired_comments = set(desired.keys())
     current_comments = set(managed_peers.keys())
@@ -213,7 +161,10 @@ def sync(cfg):
         peer = managed_peers[comment]
         if (peer.get("public-key") != d["public_key"]
                 or peer.get("allowed-address") != d["allowed_address"]):
-            update_mikrotik_peer(mk, cfg, peer[".id"], d["public_key"], d["allowed_address"])
+            update_mikrotik_peer(
+                mk, cfg, peer[".id"],
+                **{"public-key": d["public_key"], "allowed-address": d["allowed_address"]},
+            )
 
 
 def main():
