@@ -1,6 +1,5 @@
 ---
 services:
-  container_name: radicale
   radicale:
     image: ghcr.io/kozea/radicale:stable
     ports:
