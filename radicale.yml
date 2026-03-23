@@ -6,6 +6,6 @@ services:
     ports:
       - "5232:5232"
     volumes:
-      - /srv/app-configs/radicale/config:/etc/radicale:ro
-      - /srv/app-configs/radicale/data:/var/lib/radicale
+      - /srv/app-configs/radicale/config:/config:ro
+      - /srv/app-configs/radicale/data:/data
     restart: unless-stopped

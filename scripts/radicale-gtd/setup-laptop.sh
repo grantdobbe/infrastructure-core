@@ -15,7 +15,7 @@
 
 set -euo pipefail
 
-RADICALE_URL="${1:-http://10.10.10.10:5232}"
+RADICALE_URL="${1:-https://caldav.hacker-haus.org}"
 USERNAME="${2:-gdobbe}"
 
 VDIRSYNCER_CONFIG_DIR="${HOME}/.config/vdirsyncer"
