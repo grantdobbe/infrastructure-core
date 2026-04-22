@@ -18,9 +18,9 @@ To deploy changes, commit to this repository and trigger a synchronization withi
 ## Service Catalog
 
 ### Networking & Security
-- **[Caddy](caddy.yml):** Modern reverse proxy with automatic TLS. Uses modular configurations in `configs/sites/`.
+- **[Nginx Proxy Manager](nginx-proxy-manager.yml):** Modern reverse proxy with TLS through ACME.
 - **[DNS](dns.yml):** Local DNS management (Technitium).
-- **[LLDAP](lldap.yml):** Lightweight LDAP server for centralized authentication across the lab.
+- **[Authentik](authentik.yml):** Lightweight LDAP server for centralized authentication across the lab.
 
 ### Documentation & Knowledge
 - **[Bookstack](bookstack.yml):** Wiki and documentation platform, accessible at `docs.hacker-haus.org`.
@@ -34,17 +34,10 @@ To deploy changes, commit to this repository and trigger a synchronization withi
 
 ### Repository Layout
 - **`*.yml`**: Individual Docker Compose stacks for modular deployment.
-- **`configs/`**: Manual configuration files (e.g., Caddyfile) that should be synced to `/srv/app-configs/caddy/`.
 - **`stack.env`**: Environment variables and secrets used across the core stacks.
 
 ### Server Layout
 | Path | Description |
 | :--- | :--- |
 | `/srv/app-configs/` | Persistent volume root for all containers. |
-| `/srv/app-configs/caddy/` | Caddy entry point and modular site blocks. |
 
-## Maintenance
-To reload the reverse proxy after updating site configs:
-```bash
-docker exec caddy caddy reload --config /etc/caddy/Caddyfile
-```
