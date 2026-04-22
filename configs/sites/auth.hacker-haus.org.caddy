@@ -1,5 +1,0 @@
-@auth host auth.hacker-haus.org
-handle @auth {
-    reverse_proxy http://10.10.10.10:9000
-    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
-}

@@ -1,9 +1,0 @@
-@plex host plex.hacker-haus.org
-handle @plex {
-    reverse_proxy http://10.10.10.50:32400
-    # Note: hsts_enabled was 0 in NPM, but Caddy defaults to HTTPS.
-    # If HSTS is desired, uncomment the line below:
-    # header Strict-Transport-Security "max-age=31536000; includeSubDomains"
-}
-
-# Proxy Host: radarr.hacker-haus.org

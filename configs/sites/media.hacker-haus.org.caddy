@@ -1,7 +1,0 @@
-@media host media.hacker-haus.org
-handle @media {
-    reverse_proxy http://10.10.10.50:8096
-    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
-}
-
-# Proxy Host: dns.hacker-haus.org

@@ -1,7 +1,0 @@
-@ha host ha.hacker-haus.org homeassistant.hacker-haus.org
-handle @ha {
-    reverse_proxy http://10.10.10.20:8123
-    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
-}
-
-# Proxy Host: docs.hacker-haus.org
