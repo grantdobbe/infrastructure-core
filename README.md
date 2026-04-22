@@ -1,6 +1,6 @@
 # Core Infrastructure (pi-core)
 
-This directory contains the primary service definitions for the "Hacker Haus" core node.
+This repository contains the primary service definitions for the "Hacker Haus" core node. This repo is hosted on the Hacker Haus Gitea server, with a mirror at GitHub. 
 
 ## Hardware & Environment
 - **Host:** Raspberry Pi 5 (`pi-core`)
